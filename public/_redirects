@@ -1,0 +1,59 @@
+# ============================================
+# AUTH ROUTES: Proxy at root level (hardcoded)
+# ============================================
+# These are proxied to Site B (dumrooai.netlify.app) for cleaner URLs
+/login              https://dumrooai.netlify.app/login              200!
+/register           https://dumrooai.netlify.app/register           200!
+/reset-password     https://dumrooai.netlify.app/reset-password     200!
+
+# ============================================
+# APP ROUTES: Proxy dynamically (catches all)
+# ============================================
+# This dynamically catches ALL /app/* routes automatically
+# The :splat captures everything after /app/ and passes it to Site B
+/app/*              https://dumrooai.netlify.app/:splat               200!
+
+# ============================================
+# SITE A ROUTES: Explicitly list to prevent proxying
+# ============================================
+# These routes are served by Site A's SPA
+# Must be listed BEFORE the proxy catch-all
+/                   /index.html                                     200
+/about              /index.html                                     200
+/contact            /index.html                                     200
+/news               /index.html                                     200
+/blog               /index.html                                     200
+/blog-posts         /index.html                                     200
+/blog-post/*        /index.html                                     200
+/gallery            /index.html                                     200
+/privacy            /index.html                                     200
+/sitemap            /index.html                                     200
+/white-paper        /index.html                                     200
+/events             /index.html                                     200
+/terms              /index.html                                     200
+/pricing            /index.html                                     200
+/university         /index.html                                     200
+/products/*         /index.html                                     200
+/portals/*          /index.html                                     200
+
+# ============================================
+# STATIC FILE EXCEPTIONS
+# ============================================
+/robots.txt         /robots.txt                                     200
+/sitemap.xml        /sitemap.xml                                    200
+
+# ============================================
+# SITE B ASSETS & UNMATCHED: Proxy to Site B
+# ============================================
+# CRITICAL: Netlify doesn't support suffix wildcards (/*.js)
+# Proxy unmatched requests to Site B (catches Site B's assets)
+# Shadowing (no !) ensures Site A's static files are served if they exist
+# This catches Site B's assets (e.g., /auth-CHsbwoFP.js, /index-Bm_d0bak.js)
+/*                  https://dumrooai.netlify.app/:splat               200
+
+# ============================================
+# SITE A SPA CATCH-ALL (must be LAST)
+# ============================================
+# This handles Site A's root route and any other unmatched routes
+# Note: Won't be reached due to proxy above, but kept for completeness
+/*                  /index.html                                     200

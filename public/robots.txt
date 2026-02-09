@@ -1,0 +1,36 @@
+# Google Crawlers - full access, no crawl delayy
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Googlebot-News
+Allow: /
+
+User-agent: Googlebot-Video
+Allow: /
+
+# OpenAI and LLM-related bots - allow but throttle crawl rate
+User-agent: OAI-SearchBot
+Allow: /
+Crawl-delay: 15
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 15
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 15
+
+# All other bots - general access but with crawl delay to prevent overload
+User-agent: *
+Allow: /
+Crawl-delay: 10
+Disallow: /wp-admin/
+Disallow: /private/
+Disallow: /cgi-bin/
+
+# Sitemap (update once live)
+Sitemap: https://dumroo.ai/sitemap.xml
