@@ -1,0 +1,78 @@
+[build]
+  command = "node netlify-build.js"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# ============================================
+# PROXY RULES: Route authenticated routes to Site B
+# ============================================
+# These routes are proxied to your main app (Site B)
+# Status 200 = proxy (not redirect), so URL stays as dumroo.ai/*
+# Replace 'dumrooai.netlify.app' with your actual Site B Netlify subdomain
+
+# ============================================
+# AUTH ROUTES: Proxy at root level (hardcoded)
+# ============================================
+# These are hardcoded for cleaner URLs (dumroo.ai/login vs dumroo.ai/app/login)
+# Only 2-3 routes needed - better UX
+
+[[redirects]]
+  from = "/login"
+  to = "https://dumrooai.netlify.app/login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/register"
+  to = "https://dumrooai.netlify.app/register"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/reset-password"
+  to = "https://dumrooai.netlify.app/reset-password"
+  status = 200
+  force = true
+
+# ============================================
+# APP ROUTES: Proxy dynamically (catches all)
+# ============================================
+# This dynamically catches ALL /app/* routes automatically
+# The :splat captures everything after /app/ and passes it to Site B
+# Site B receives routes WITHOUT the /app prefix
+
+[[redirects]]
+  from = "/app/*"
+  to = "https://dumrooai.netlify.app/:splat"
+  status = 200
+  force = true
+
+# ============================================
+# STATIC FILE EXCEPTIONS (before catch-all)
+# ============================================
+# These must come BEFORE the SPA catch-all redirect
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/robots.txt"
+  status = 200
+  force = false
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/sitemap.xml"
+  status = 200
+  force = false
+
+# ============================================
+# SPA CATCH-ALL (must be LAST)
+# ============================================
+# This handles all other routes for your public-pages SPA
+# Must be AFTER all proxy rules and static file exceptions
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
